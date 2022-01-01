@@ -18,7 +18,12 @@ public class Flashlight : MonoBehaviour
 
     private void Update()
     {
-        for(int color = 0; color < rgb.Length; color++)
+        UpdateTriggers();
+    }
+
+    private void UpdateTriggers()
+    {
+        for (int color = 0; color < rgb.Length; color++)
         {
             if (Input.GetButtonDown(rgb[color])) //y puedo hacer eso
             {
@@ -30,28 +35,27 @@ public class Flashlight : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        ColorReactor cr = other.gameObject.GetComponent<ColorReactor>();
-        if (cr != null)
-        {
-            Color objectColor = cr.GetColor();
-            cr.GetComponent<Collider>().isTrigger = bulb.r == 0 && objectColor.r > 0 ||
-            bulb.g == 0 && objectColor.g > 0 ||
-            bulb.b == 0 && objectColor.b > 0;
-        }
+        SetTrigger(other.gameObject.GetComponent<ColorReactor>());
     }
 
     private void OnTriggerStay(Collider other)
     {
         if(updateTriggers)
         {
-            ColorReactor cr = other.gameObject.GetComponent<ColorReactor>();
-            if (cr != null)
-            {
-                Color objectColor = cr.GetColor();
-                cr.GetComponent<Collider>().isTrigger = bulb.r == 0 && objectColor.r > 0 ||
-                bulb.g == 0 && objectColor.g > 0 ||
-                bulb.b == 0 && objectColor.b > 0;
-            }
+            SetTrigger(other.gameObject.GetComponent<ColorReactor>());
+        }
+    }
+
+    private void SetTrigger(ColorReactor cr) 
+    { 
+        //Decides whether the object becomes a trigger of not depending on its colors
+        if (cr != null)
+        {
+            //The object will become trigger if it's not being enlightned by any of its colors.
+            Color objectColor = cr.GetColor();
+            cr.GetComponent<Collider>().isTrigger = !(bulb.r == 1 && objectColor.r > 0 ||
+            bulb.g == 1 && objectColor.g > 0 ||
+            bulb.b == 1 && objectColor.b > 0);
         }
     }
 
